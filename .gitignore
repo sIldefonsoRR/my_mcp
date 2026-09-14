@@ -3,4 +3,3 @@ __pycache__/
 .venv/
 .ruff_cache/
 .claude/settings.local.json
-cities.csv
