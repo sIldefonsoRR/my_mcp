@@ -11,22 +11,22 @@ async def main() -> None:
         async with ClientSession(read, write) as session:
             await session.initialize()
 
-            # # command
-            # country_code = "pt"
-            # city_name = "Faro"
-            # result = await session.call_tool(
-            #     "get_city_details",
-            #     {"country_code": country_code, "city_name": city_name, }
-            # )            
-            # result = result.content[0].text
-            # print(result)
+            # command
+            country_code = "pt"
+            city_name = "Faro"
+            result = await session.call_tool(
+                "get_city_details",
+                {"country_code": country_code, "city_name": city_name, }
+            )            
+            result = result.content[0].text
+            print(result)
 
             # command
-            # result = await session.read_resource(
-            #     "cities://countries/",
-            # )            
-            # result = result.contents[0].text
-            # print(result)
+            result = await session.read_resource(
+                "cities://countries/",
+            )            
+            result = result.contents[0].text
+            print(result)
 
             # command
             country_code = "pt"
