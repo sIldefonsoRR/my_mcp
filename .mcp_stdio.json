@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "my_mcp_server": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp",
+        "mcp",
+        "run",
+        "mcp_server.py"
+      ],
+      "cwd": "/Users/sergioildefonso/my_mcp"
+    }
+  }
+}

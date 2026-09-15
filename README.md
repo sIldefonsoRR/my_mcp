@@ -32,6 +32,10 @@ Place `cities.csv` and `countries.csv` in the project root (already included).
 
 ## Running the server
 
+Two transport variants are available.
+
+**stdio** (`mcp_server.py`) — spawned per-client, no separate process to manage:
+
 ```bash
 uv run --with mcp mcp run mcp_server.py
 ```
@@ -42,38 +46,46 @@ Or directly:
 python mcp_server.py
 ```
 
-### Registering with an MCP client
+**SSE** (`mcp_server_http.py`) — long-running HTTP server, listens on `127.0.0.1:8000`; must be started separately before any client connects:
 
-`.mcp.json` already configures this server for stdio clients:
-
-```json
-{
-  "mcpServers": {
-    "my_mcp_server": {
-      "type": "stdio",
-      "command": "uv",
-      "args": ["run", "--with", "mcp", "mcp", "run", "mcp_server.py"],
-      "cwd": "/Users/sergioildefonso/my_mcp"
-    }
-  }
-}
+```bash
+python mcp_server_http.py
+# Running MCP server on http://127.0.0.1:8000/sse ...
 ```
 
-## Example client
+### Registering with an MCP client
 
-`mcp_client.py` shows a minimal stdio client that starts the server as a subprocess, calls tools/resources/prompts, and prints results.
+Three client config files are included:
+
+- `.mcp_stdio.json` — stdio, launches `mcp_server.py` via `uv run --with mcp mcp run mcp_server.py`.
+- `.mcp_sse.json` — SSE, connects to `http://127.0.0.1:8000/sse`. Start `mcp_server_http.py` first — this config only connects to it, it does not launch it.
+- `.mcp.json` — legacy stdio config, same shape as `.mcp_stdio.json`. Its `cwd` (`/Users/sergioildefonso/my_mcp`) doesn't match this checkout's actual path — update it before using.
+
+## Example clients
+
+`mcp_client.py` — minimal stdio client, starts `mcp_server.py` as a subprocess, calls tools/resources/prompts, and prints results.
 
 ```bash
 python mcp_client.py
 ```
 
+`mcp_client_http.py` — same calls over SSE; requires `mcp_server_http.py` already running.
+
+```bash
+python mcp_client_http.py
+```
+
 ## Project structure
 
 ```
-mcp_server.py    # FastMCP app: registers tools, resources, prompt
-operations.py    # Implementation of tools/resources/prompt + CSV loading
-mcp_client.py    # Example stdio client
+mcp_server.py        # FastMCP app (stdio): registers tools, resources, prompt
+mcp_server_http.py   # FastMCP app (SSE, 127.0.0.1:8000): same registrations
+operations.py        # Implementation of tools/resources/prompt + CSV loading
+mcp_client.py         # Example stdio client
+mcp_client_http.py    # Example SSE client
 cities.csv       # City dataset (Country, City, AccentCity, Region, Population, Latitude, Longitude, ...)
 countries.csv    # Country dataset (Code, Name)
-.mcp.json        # MCP client config for stdio launch via uv
+.mcp_stdio.json  # MCP client config, stdio launch via uv
+.mcp_sse.json    # MCP client config, connects to running SSE server
+.mcp.json        # Legacy stdio config (stale cwd)
 ```
